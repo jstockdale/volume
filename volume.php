@@ -20,15 +20,16 @@
 $VOLUME_CMD_GET = "osascript -e 'get output volume of (get volume settings)'";
 $VOLUME_CMD_SET = "osascript -e 'set volume output volume %d'";
 
+$VOLUME_PARAM = "volume";
+$VOLUME_PARAM_REVERT = "volume_revert";
+$VOLUME_MAX = 100;
+$VOLUME_MIN = 0;
+
 $VOLUME_OLD_TXT = "Old volume: %d\n";
 $VOLUME_CURR_TXT = "Current volume: %d\n";
 $VOLUME_NEW_TXT =
   "  <label for='volume'>New volume:</label>\n".
-  "  <input type='text' id='volume' name='volume' style='border:0;'/>";
-
-$VOLUME_PARAM = "volume";
-$VOLUME_MAX = 100;
-$VOLUME_MIN = 0;
+  "  <input type='text' id=$VOLUME_PARAM name=$VOLUME_PARAM style='border:0; font-size:16px; font-family:serif;'/>";
 
 $volume_old = NULL;
 $volume_curr = NULL;
@@ -80,7 +81,12 @@ $volume_curr = get_system_volume($VOLUME_CMD_GET, $VOLUME_MIN, $VOLUME_MAX);
 
 // If we have a volume request (post) go ahead and set volume_new
 if (isset($_POST[$VOLUME_PARAM]) && is_numeric($_POST[$VOLUME_PARAM])) {
-  $volume_new = intval($_REQUEST[$VOLUME_PARAM]);
+  $volume_request = $_POST[$VOLUME_PARAM];
+} else if (isset($_POST[$VOLUME_PARAM_REVERT]) && is_numeric($_POST[$VOLUME_PARAM_REVERT])) {
+  $volume_request = $_POST[$VOLUME_PARAM_REVERT];
+}
+if ($volume_request) {
+  $volume_new = intval($volume_request);
   if ( $volume_new > $VOLUME_MAX || $volume_new < $VOLUME_MIN ) {
     throw new Exception("Volume must be between ".$VOLUME_MIN." and ".$VOLUME_MAX."!");
   }
@@ -95,23 +101,32 @@ if (isset($_POST[$VOLUME_PARAM]) && is_numeric($_POST[$VOLUME_PARAM])) {
 printf("<!DOCTYPE html>\n<html>\n");
 
 printf("<head>\n");
-$header = file_get_contents("header.html");
+$header =
+  "  <link href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' rel='stylesheet' type='text/css'/>\n".
+  "  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js'></script>\n".
+  "  <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js'></script>\n".
+  "    <style type='text/css'>\n".
+  "    #slider {\n".
+  "               margin: 10px;\n".
+  "               height: 100px;\n".
+  "            }\n".
+  "     </style>\n";
 printf($header);
 
-$volume_init = $volume_new ? $volume_new : $volume_curr;
+$volume_slider = $volume_new ? $volume_new : $volume_curr;
 $slider_args =
   "min: ".$VOLUME_MIN.",\n".
   "max: ".$VOLUME_MAX.",\n".
-  "value: ".$volume_init.",\n".
+  "value: ".$volume_slider.",\n".
   "orientation: 'vertical',\n".
   "slide: function( event, ui ) {\n".
-  "  $('#volume').attr( 'value', ui.value );\n".
+  "  $('#".$VOLUME_PARAM."').attr( 'value', ui.value );\n".
   "}";
 $slider_js =
   "<script>\n".
   "  $(document).ready(function() {\n".
   "  $('#slider').slider({".$slider_args."});\n".
-  "  $('#volume').attr( 'value', $('#slider').slider('value'));".
+  "  $('#".$VOLUME_PARAM."').attr( 'value', $('#slider').slider('value'));".
   "  });\n".
   "</script>\n";
 printf($slider_js);
@@ -124,15 +139,20 @@ printf("<body>\n");
 printf("<div id='slider'></div>");
 
 if ($volume_new) {
-  printf($VOLUME_OLD_TXT, $volume_old);
-  printf("<br />");
+  if ($volume_new != $volume_old) {
+    printf("<form method='POST'>\n");
+    printf($VOLUME_OLD_TXT, $volume_old);
+    printf("<input type='hidden' id='".$VOLUME_PARAM_REVERT."' name='".$VOLUME_PARAM_REVERT."' value='".$volume_old."' />\n");
+    printf("<input type='submit' value='Revert'/>\n");
+    printf("</form>\n");
+  }
 }
 
 printf($VOLUME_CURR_TXT, get_system_volume($VOLUME_CMD_GET, $VOLUME_MIN, $VOLUME_MAX));
 printf("<br />");
 printf("<form method='POST'>\n");
-  printf($VOLUME_NEW_TXT);
-  printf("<input type='submit'/>\n");
+printf($VOLUME_NEW_TXT);
+printf("<input type='submit'/>\n");
 printf("</form>\n");
 
 // Close body and html tags
