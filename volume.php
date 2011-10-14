@@ -153,7 +153,7 @@ printf($VOLUME_CURR_TXT, get_system_volume($VOLUME_CMD_GET, $VOLUME_MIN, $VOLUME
 printf("<br />\n");
 printf("<form method='POST'>\n");
 printf($VOLUME_NEW_TXT);
-printf("<input type='submit'/>\n");
+printf("<input type='submit' value='Make it so'/>\n");
 printf("</form>\n");
 
 // Close body and html tags
