@@ -149,7 +149,7 @@ if ($volume_new) {
 }
 
 printf($VOLUME_CURR_TXT, get_system_volume($VOLUME_CMD_GET, $VOLUME_MIN, $VOLUME_MAX));
-printf("<br />");
+printf("<br />\n");
 printf("<form method='POST'>\n");
 printf($VOLUME_NEW_TXT);
 printf("<input type='submit'/>\n");
