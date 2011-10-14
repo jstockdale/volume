@@ -24,7 +24,7 @@ $VOLUME_PARAM = "volume";
 $VOLUME_PARAM_REVERT = "volume_revert";
 $VOLUME_MIN = 0;
 $VOLUME_MAX = 100;
-$VOLUME_FUDGE = 1;
+$VOLUME_FUDGE = 2;
 
 $VOLUME_OLD_TXT = "Old volume: %d\n";
 $VOLUME_CURR_TXT = "Current volume: %d\n";
@@ -60,7 +60,7 @@ function get_system_volume($get_cmd, $vol_min, $vol_max) {
 // TODO: (jstockdale)
 // Move this to a library
 // Function to set system volume via exec.
-function set_system_volume($volume_new, $set_cmd, $get_cmd, $vol_min, $vol_max) {
+function set_system_volume(&$volume_new, $set_cmd, $get_cmd, $vol_min, $vol_max, $vol_fudge) {
   // Set the new volume of the system
   $output_array = array();
   $return_value = NULL;
@@ -70,7 +70,7 @@ function set_system_volume($volume_new, $set_cmd, $get_cmd, $vol_min, $vol_max) 
   }
   $volume_result = get_system_volume($get_cmd, $vol_min, $vol_max);
   if ($volume_result != $volume_new) {
-    if (abs($volume_result - $volume_new) <= $VOLUME_FUDGE) {
+    if (abs($volume_result - $volume_new) <= $vol_fudge) {
       $volume_new = $volume_result;
     } else {
       throw new Exception("Set new volume but system volume did not change!");
@@ -92,7 +92,7 @@ if ($volume_request) {
     throw new Exception("Volume must be between ".$VOLUME_MIN." and ".$VOLUME_MAX."!");
   }
   $volume_old = $volume_curr;
-  set_system_volume($volume_new, $VOLUME_CMD_SET, $VOLUME_CMD_GET, $VOLUME_MIN, $VOLUME_MAX);
+  set_system_volume($volume_new, $VOLUME_CMD_SET, $VOLUME_CMD_GET, $VOLUME_MIN, $VOLUME_MAX, $VOLUME_FUDGE);
 }
 
 // TODO: (jstockdale)
