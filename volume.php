@@ -86,7 +86,7 @@ if (isset($_POST[$VOLUME_PARAM]) && is_numeric($_POST[$VOLUME_PARAM])) {
 } else if (isset($_POST[$VOLUME_PARAM_REVERT]) && is_numeric($_POST[$VOLUME_PARAM_REVERT])) {
   $volume_request = $_POST[$VOLUME_PARAM_REVERT];
 }
-if ($volume_request) {
+if (isset($volume_request)) {
   $volume_new = intval($volume_request);
   if ( $volume_new > $VOLUME_MAX || $volume_new < $VOLUME_MIN ) {
     throw new Exception("Volume must be between ".$VOLUME_MIN." and ".$VOLUME_MAX."!");
@@ -114,7 +114,7 @@ $header =
   "     </style>\n";
 printf($header);
 
-$volume_slider = $volume_new ? $volume_new : $volume_curr;
+$volume_slider = isset($volume_new) ? $volume_new : $volume_curr;
 $slider_args =
   "min: ".$VOLUME_MIN.",\n".
   "max: ".$VOLUME_MAX.",\n".
@@ -139,7 +139,7 @@ printf("<body>\n");
 // Slider div (for jQuery)
 printf("<div id='slider'></div>");
 
-if ($volume_new) {
+if (isset($volume_new)) {
   if ($volume_new != $volume_old) {
     printf("<form method='POST'>\n");
     printf($VOLUME_OLD_TXT, $volume_old);
