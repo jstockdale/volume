@@ -30,7 +30,7 @@ $VOLUME_OLD_TXT = "Old volume: %d\n";
 $VOLUME_CURR_TXT = "Current volume: %d\n";
 $VOLUME_NEW_TXT =
   "  <label for='volume'>New volume:</label>\n".
-  "  <input type='text' id=$VOLUME_PARAM name=$VOLUME_PARAM style='border:0; font-size:16px; font-family:serif;'/>";
+  "  <input type='text' id=$VOLUME_PARAM name=$VOLUME_PARAM size='1' style='border:0; font-size:16px; font-family:serif;'/>";
 
 $volume_old = NULL;
 $volume_curr = NULL;
@@ -108,9 +108,15 @@ $header =
   "  <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js'></script>\n".
   "    <style type='text/css'>\n".
   "    #slider {\n".
-  "               margin: 10px;\n".
-  "               height: 100px;\n".
-  "            }\n".
+  "      margin: 10px;\n".
+  "      height: 100px;\n".
+  "    }\n".
+  "    .volume_div {\n".
+  "      width: 250px;\n".
+  "    }\n".
+  "    .submit_button {\n".
+  "      float: right;\n".
+  "    }\n".
   "     </style>\n";
 printf($header);
 
@@ -139,12 +145,13 @@ printf("<body>\n");
 // Slider div (for jQuery)
 printf("<div id='slider'></div>");
 
+printf("<div class='volume_div'>");
 if (isset($volume_new)) {
   if ($volume_new != $volume_old) {
     printf("<form method='POST'>\n");
     printf($VOLUME_OLD_TXT, $volume_old);
     printf("<input type='hidden' id='".$VOLUME_PARAM_REVERT."' name='".$VOLUME_PARAM_REVERT."' value='".$volume_old."' />\n");
-    printf("<input type='submit' value='Revert'/>\n");
+    printf("<div class='submit_button'><input type='submit' value='Revert'/></div>\n");
     printf("</form>\n");
   }
 }
@@ -153,8 +160,9 @@ printf($VOLUME_CURR_TXT, get_system_volume($VOLUME_CMD_GET, $VOLUME_MIN, $VOLUME
 printf("<br />\n");
 printf("<form method='POST'>\n");
 printf($VOLUME_NEW_TXT);
-printf("<input type='submit' value='Make it so'/>\n");
+printf("<div class='submit_button'><input type='submit' value='Make it so'/></div>\n");
 printf("</form>\n");
+printf("</div>");
 
 // Close body and html tags
 printf("</body>\n");
