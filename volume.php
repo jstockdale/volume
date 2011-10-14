@@ -122,15 +122,20 @@ $header =
   "      width: 320px;\n".
   "    }\n".
   "    .volume_div {\n".
+  "      border-style: solid;\n".
+  "      border-width: 1px;\n".
+  "      border-color: grey;\n".
   "      background-color: #EEEEEE;\n".
   "      padding: 14px;\n".
-  "      margin-top: 20px;\n".
-  "      margin-right: 28px;\n".
-  "      height: 55px;\n".
+  "      padding-right: 20px;\n".
+  "      margin-top: 19px;\n".
+  "      margin-right: 14px;\n".
+  "      height: 56px;\n".
   "      float: right;\n".
   "    }\n".
   "    .submit_button {\n".
   "      float: right;\n".
+  "      margin-left: 20px;\n".
   "    }\n".
   "     </style>\n";
 printf($header);
@@ -164,19 +169,6 @@ printf("<div class='container'>");
 printf("<div id='slider'></div>");
 
 printf("<div class='volume_div'>");
-if (isset($volume_new)) {
-  if ($volume_new != $volume_old) {
-    printf("<form method='POST'>\n");
-    printf($VOLUME_OLD_TXT, $volume_old);
-    printf("<input type='hidden' id='".$VOLUME_PARAM_REVERT."' name='".$VOLUME_PARAM_REVERT."' value='".$volume_old."' />\n");
-    printf("<div class='submit_button'><input type='submit' value='Revert'/></div>\n");
-    printf("</form>\n");
-  } else {
-    printf("<br />\n");
-  }
-} else {
-  printf("<br />\n");
-}
 
 printf($VOLUME_CURR_TXT, get_system_volume($VOLUME_CMD_GET, $VOLUME_MIN, $VOLUME_MAX));
 printf("<br />\n");
@@ -184,6 +176,17 @@ printf("<form method='POST'>\n");
 printf($VOLUME_NEW_TXT);
 printf("<div class='submit_button'><input type='submit' value='Make it so'/></div>\n");
 printf("</form>\n");
+
+if (isset($volume_new)) {
+  if ($volume_new != $volume_old) {
+    printf("<form method='POST'>\n");
+    printf($VOLUME_OLD_TXT, $volume_old);
+    printf("<input type='hidden' id='".$VOLUME_PARAM_REVERT."' name='".$VOLUME_PARAM_REVERT."' value='".$volume_old."' />\n");
+    printf("<div class='submit_button'><input type='submit' value='Revert'/></div>\n");
+    printf("</form>\n");
+  }
+}
+// Close volume div
 printf("</div>");
 
 // Close container
