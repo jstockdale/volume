@@ -22,8 +22,9 @@ $VOLUME_CMD_SET = "osascript -e 'set volume output volume %d'";
 
 $VOLUME_PARAM = "volume";
 $VOLUME_PARAM_REVERT = "volume_revert";
-$VOLUME_MAX = 100;
 $VOLUME_MIN = 0;
+$VOLUME_MAX = 100;
+$VOLUME_FUDGE = 1;
 
 $VOLUME_OLD_TXT = "Old volume: %d\n";
 $VOLUME_CURR_TXT = "Current volume: %d\n";
@@ -69,7 +70,7 @@ function set_system_volume($volume_new, $set_cmd, $get_cmd, $vol_min, $vol_max) 
   }
   $volume_result = get_system_volume($get_cmd, $vol_min, $vol_max);
   if ($volume_result != $volume_new) {
-    if (abs($volume_result - $volume_new) <= 1) {
+    if (abs($volume_result - $volume_new) <= $VOLUME_FUDGE) {
       $volume_new = $volume_result;
     } else {
       throw new Exception("Set new volume but system volume did not change!");
