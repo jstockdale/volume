@@ -17,17 +17,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-$VOLUME_CMD_GET = "osascript -e 'get output volume of (get volume settings)'";
-$VOLUME_CMD_SET = "osascript -e 'set volume output volume %d'";
+$VOLUME_CMD_GET = "osascript ".$_SERVER['DOCUMENT_ROOT']."applescript/get.scpt";
+$VOLUME_CMD_SET = "osascript ".$_SERVER['DOCUMENT_ROOT']."applescript/set.scpt %f";
 
 $VOLUME_PARAM = "volume";
 $VOLUME_PARAM_REVERT = "volume_revert";
 $VOLUME_MIN = 0;
-$VOLUME_MAX = 100;
-$VOLUME_FUDGE = 2;
+$VOLUME_MAX = 1;
+$VOLUME_STEP = .01;
+$VOLUME_FUDGE = .02;
 
-$VOLUME_OLD_TXT = "Old volume: %d\n";
-$VOLUME_CURR_TXT = "Current volume: %d\n";
+$VOLUME_OLD_TXT = "Old volume: %.2f\n";
+$VOLUME_CURR_TXT = "Current volume: %.2f\n";
 $VOLUME_NEW_TXT =
   "  <label for='volume'>New volume:</label>\n".
   "  <input type='text' id=$VOLUME_PARAM name=$VOLUME_PARAM size='1' style='border:0; font-size:16px; font-family:serif;'/>";
@@ -49,7 +50,7 @@ function get_system_volume($get_cmd, $vol_min, $vol_max) {
   if ($return_value != 0 || !is_numeric($output_array[0])) {
     throw new Exception("Cannot get current system volume!");
   } else {
-    $volume_curr = intval($output_array[0]);
+    $volume_curr = floatval($output_array[0]);
     if ( $volume_curr > $vol_max || $volume_curr < $vol_min ) {
       throw new Exception("Current system volume value is invalid!");
     }
@@ -87,12 +88,18 @@ if (isset($_POST[$VOLUME_PARAM]) && is_numeric($_POST[$VOLUME_PARAM])) {
   $volume_request = $_POST[$VOLUME_PARAM_REVERT];
 }
 if (isset($volume_request)) {
-  $volume_new = intval($volume_request);
-  if ( $volume_new > $VOLUME_MAX || $volume_new < $VOLUME_MIN ) {
-    throw new Exception("Volume must be between ".$VOLUME_MIN." and ".$VOLUME_MAX."!");
+  $volume_new = floatval($volume_request);
+  // Fixup bad volume values
+  if ( $volume_new > $VOLUME_MAX ) {
+    $volume_new = $VOLUME_MAX;
+  } elseif ( $volume_new < $VOLUME_MIN ) {
+    $volume_new = $VOLUME_MIN;
   }
   $volume_old = $volume_curr;
   set_system_volume($volume_new, $VOLUME_CMD_SET, $VOLUME_CMD_GET, $VOLUME_MIN, $VOLUME_MAX, $VOLUME_FUDGE);
+  // TODO: (jstockdale)
+  // Refactor to ajax submit and remove this!
+  header("location: volume.php");
 }
 
 // TODO: (jstockdale)
@@ -103,6 +110,7 @@ printf("<!DOCTYPE html>\n<html>\n");
 
 printf("<head>\n");
 $header =
+  "  <title>Volume Control</title>\n".
   "  <link href='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' rel='stylesheet' type='text/css'/>\n".
   "  <script src='http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js'></script>\n".
   "  <script src='http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js'></script>\n".
@@ -144,6 +152,7 @@ $volume_slider = isset($volume_new) ? $volume_new : $volume_curr;
 $slider_args =
   "min: ".$VOLUME_MIN.",\n".
   "max: ".$VOLUME_MAX.",\n".
+  "step: ".$VOLUME_STEP.",\n".
   "value: ".$volume_slider.",\n".
   "orientation: 'vertical',\n".
   "slide: function( event, ui ) {\n".
@@ -174,7 +183,7 @@ printf($VOLUME_CURR_TXT, get_system_volume($VOLUME_CMD_GET, $VOLUME_MIN, $VOLUME
 printf("<br />\n");
 printf("<form method='POST'>\n");
 printf($VOLUME_NEW_TXT);
-printf("<div class='submit_button'><input type='submit' value='Make it so'/></div>\n");
+printf("<div class='submit_button'><input type='submit' name='submit' value='Make it so'/></div>\n");
 printf("</form>\n");
 
 if (isset($volume_new)) {
@@ -182,7 +191,7 @@ if (isset($volume_new)) {
     printf("<form method='POST'>\n");
     printf($VOLUME_OLD_TXT, $volume_old);
     printf("<input type='hidden' id='".$VOLUME_PARAM_REVERT."' name='".$VOLUME_PARAM_REVERT."' value='".$volume_old."' />\n");
-    printf("<div class='submit_button'><input type='submit' value='Revert'/></div>\n");
+    printf("<div class='submit_button'><input type='submit' name='submit' value='Revert'/></div>\n");
     printf("</form>\n");
   }
 }
