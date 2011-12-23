@@ -17,8 +17,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-$VOLUME_CMD_GET = "osascript ".$_SERVER['DOCUMENT_ROOT']."applescript/get.scpt";
-$VOLUME_CMD_SET = "osascript ".$_SERVER['DOCUMENT_ROOT']."applescript/set.scpt %f";
+$VOLUME_CMD_GET = "osascript ".dirname($_SERVER['DOCUMENT_ROOT'])."/applescript/get.scpt";
+$VOLUME_CMD_SET = "osascript ".dirname($_SERVER['DOCUMENT_ROOT'])."/applescript/set.scpt %f";
 
 $VOLUME_PARAM = "volume";
 $VOLUME_PARAM_REVERT = "volume_revert";
