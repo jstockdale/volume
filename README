@@ -1,3 +1,45 @@
-A simple web volume controller for OS X v0.1
+A simple web volume controller for OS X v0.2.0
 
-This is the first proof of concept. Will clean up the interface and make a bunch of improvements for v0.2
+The controller executes applescript to get and set the volume of
+Airfoil Speakers. A system-audio version is available (although
+possible out of date) as it's own branch.
+
+In theory, since we're using applescript you should be able to
+integrate with any control within OS X, with minimal changes.
+
+Install instructions:
+
+Mac OS X does not allow the default apache user (_www) to
+interact with the window models. Any applescirpt that attempts
+to will fail. The fix for this, is to run apache as the user
+who will be logged into OS X while the volume control is used.
+
+Although you could use any user, it's probably a bad idea to
+use a system administrator account, as any vulnerabilities in
+apache could allow an attacker to completely compromise your
+system.
+
+The way I run this is by creating a new 'music' user. The user
+should not be allowed to administor the machine. Then modify
+/private/etc/apache2/httpd.conf so that the user and group lines
+that original point to _www to point to:
+
+user music
+group staff
+
+This would also be a good time to change your DocumentRoot to
+point to the root folder of the git repository you checked out.
+
+DocumentRoot "/Users/jstockdale/Sites"
+
+(NB: Here you see I'm running apache as the music user but the
+code is owned by me. In general, it's a good idea for the code to
+be cloned by a different user than is running apache, so that a
+malicious attacker can't modify the running code unless they do
+more than compromise apache.)
+
+Finally, log into the system as your new 'music' user and start up
+Airfoil Speakers. You can also use fast user switching, but the
+music will only play while the 'music' user is currently active.
+
+Enjoy!
