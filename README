@@ -39,7 +39,7 @@ malicious attacker can't modify the running code unless they do
 more than compromise apache.)
 
 Finally, log into the system as your new 'music' user. Go to
-System Preferences and under 'Universal Access' make sure
+'System Preferences' and under 'Universal Access' make sure
 'Enable access for assistive devices' is checked. Now start up
 Airfoil Speakers, and navigate to http://localhost/volume.php
 
