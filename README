@@ -38,8 +38,12 @@ be cloned by a different user than is running apache, so that a
 malicious attacker can't modify the running code unless they do
 more than compromise apache.)
 
-Finally, log into the system as your new 'music' user and start up
-Airfoil Speakers. You can also use fast user switching, but the
-music will only play while the 'music' user is currently active.
+Finally, log into the system as your new 'music' user. Go to
+System Preferences and under 'Universal Access' make sure
+'Enable access for assistive devices' is checked. Now start up
+Airfoil Speakers, and navigate to http://localhost/volume.php
+
+(You can also use fast user switching, but the music will only
+play while the 'music' user is currently active.)
 
 Enjoy!
