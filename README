@@ -1,8 +1,8 @@
 A simple web volume controller for OS X v0.2.0
 
 The controller executes applescript to get and set the volume of
-Airfoil Speakers. A system-audio version is available (although
-possible out of date) as it's own branch.
+Airfoil Speakers. A system audio version is available (although
+possibly out of date) as it's own branch (system-audio).
 
 In theory, since we're using applescript you should be able to
 integrate with any control within OS X, with minimal changes.
