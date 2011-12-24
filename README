@@ -20,7 +20,7 @@ apache could allow an attacker to completely compromise your
 system.
 
 The way I run this is by creating a new 'music' user. The user
-should not be allowed to administor the machine. Then modify
+should not be allowed to administer the machine. Then modify
 /private/etc/apache2/httpd.conf so that the user and group lines
 that original point to _www to point to:
 
